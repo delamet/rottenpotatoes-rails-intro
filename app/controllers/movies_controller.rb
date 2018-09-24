@@ -1,4 +1,7 @@
 class MoviesController < ApplicationController
+  
+  $SORT_BY_TITLE = 0
+  $SORT_BY_DATE = 1
 
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
@@ -12,6 +15,18 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    render 'movies/index'
+  end
+  
+  def sort
+    @sort = params[:sort]
+    if @sort == "0"
+      @movies = Movie.order(:title)
+    else 
+      @movies = Movie.order(:release_date)
+    end
+    puts "sort called"
+    render 'movies/index'
   end
 
   def new
