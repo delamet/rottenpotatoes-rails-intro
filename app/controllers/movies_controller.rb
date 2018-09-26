@@ -14,28 +14,48 @@ class MoviesController < ApplicationController
 
   def index
     puts params
+    @movies = Movie.all
+    sort = params[:format]
+    ratingStatus = params[:ratings]
+    if sort == nil 
+      # No sort, use session sort
+      @sort = session[:format]
+    else
+      @sort = sort
+      session[:format] = @sort
+    end
+    if ratingStatus == nil || ratingStatus.length == 0
+      # No ratings or ratings in 0, use session ratings
+      @ratingStatus = session[:ratings]
+    else 
+      @ratingStatus = ratingStatus
+      session[:ratings] = ratingStatus
+    end
+    refresh = params[:commit]
     @all_ratings = Movie.getRatings
     @ratingHash = Hash.new
     for rating in @all_ratings 
+      # initialy populate ratings hash to all true
       @ratingHash[rating] = true
     end
-    @movies = Movie.all
-    @sort = params[:format]
-    @ratingStatus = params[:ratings]
-    refresh = params[:commit]
     if refresh == "Refresh"
+      # filter ratings pressed
       keys = @ratingStatus.keys
       @movies = Movie.where(rating: keys)
       for rating in @all_ratings 
+        # initialy set ratings hash to false
          @ratingHash[rating] = false
       end
       for key in keys
+        # set ratings hash true for selected ratings
         @ratingHash[key] = true
       end
     end
     if @sort == "0"
+      # sort by title
       @movies = @movies.order(:title)
     elsif @sort == "1"
+      # sort by release date
       @movies = @movies.order(:release_date)
     end
   end

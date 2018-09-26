@@ -3,7 +3,6 @@
 
 = form_tag movies_path, :method => :get, id: "form_id" do
   Include:
-  =hidden_field_tag 'format', @sort
   - @all_ratings.each do |rating|
     =rating
     =check_box_tag "ratings[#{rating}]", "1", @ratingHash[rating], id: "ratings_#{rating}"
